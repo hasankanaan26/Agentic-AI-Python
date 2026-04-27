@@ -1,0 +1,96 @@
+[project]
+name = "project-4-agents"
+version = "0.4.0"
+description = "Production-shaped agentic AI service: async FastAPI, tool calling, agent loops, RAG, multi-agent orchestration, and tracing — taught across 4 checkpoints."
+readme = "README.md"
+requires-python = ">=3.12"
+
+dependencies = [
+    # Web framework (async, all the way down)
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.34",
+
+    # Configuration & validation
+    "pydantic>=2.10",
+    "pydantic-settings>=2.7",
+    "python-dotenv>=1.0",
+
+    # HTTP client (async only — no `requests`)
+    "httpx>=0.28",
+
+    # LLM provider SDKs (each ships an async client)
+    "openai>=1.59",
+    "google-genai>=1.5",
+
+    # LangChain + LangGraph (used from CP3 onwards)
+    "langchain-core>=0.3",
+    "langchain>=0.3",
+    "langchain-openai>=0.3",
+    "langchain-google-genai>=2.1",
+    "langgraph>=0.3",
+    "langgraph-checkpoint-sqlite>=2.0",
+
+    # RAG: vector store + tokenization (CP3)
+    "chromadb>=0.5",
+    "tiktoken>=0.7",
+
+    # Structured logging + retries + caching
+    "structlog>=24.4",
+    "tenacity>=9.0",
+    "cachetools>=5.5",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "pytest-mock>=3.14",
+    "ruff>=0.8",
+    "pre-commit>=4.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+# We ship four runnable checkpoints; the wheel build target is the latest.
+packages = ["checkpoints/checkpoint-4-orchestration/app"]
+
+[tool.uv]
+package = false  # this is a workspace, not a publishable package
+
+# --- pytest -----------------------------------------------------------
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = [
+    "checkpoints/checkpoint-1-tool-calling",
+    "checkpoints/checkpoint-2-agent-loop",
+    "checkpoints/checkpoint-3-safety-rag",
+    "checkpoints/checkpoint-4-orchestration",
+]
+addopts = "-q --tb=short"
+
+# --- ruff -------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E", "F", "W",   # pycodestyle / pyflakes
+    "I",             # isort
+    "B",             # bugbear
+    "UP",            # pyupgrade
+    "ASYNC",         # async pitfalls
+    "SIM",           # simplify
+    "RUF",           # ruff-specific
+]
+ignore = [
+    "E501",  # long lines (handled by formatter)
+    "B008",  # function default arg call — FastAPI Depends() is fine
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011"]  # allow `assert False` in tests

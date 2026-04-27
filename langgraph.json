@@ -1,0 +1,7 @@
+{
+  "dependencies": ["./checkpoints/checkpoint-4-orchestration"],
+  "graphs": {
+    "executor": "./checkpoints/checkpoint-4-orchestration/app/agents/studio.py:executor_graph"
+  },
+  "env": ".env"
+}

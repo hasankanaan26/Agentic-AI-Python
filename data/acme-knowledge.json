@@ -1,0 +1,122 @@
+[
+  {
+    "id": "leave-001",
+    "topic": "Annual Leave",
+    "content": "Employees receive 20 days of paid annual leave per year. Up to 5 unused days can be carried over to the next year. Leave must be requested at least 2 weeks in advance for periods longer than 3 days.",
+    "tags": ["leave", "vacation", "time-off", "PTO", "annual"]
+  },
+  {
+    "id": "leave-002",
+    "topic": "Sick Leave",
+    "content": "Employees receive 10 days of paid sick leave per year. A doctor's note is required for absences longer than 3 consecutive days. Unused sick days do not carry over.",
+    "tags": ["leave", "sick", "health", "absence"]
+  },
+  {
+    "id": "leave-003",
+    "topic": "Parental Leave",
+    "content": "Primary caregivers receive 16 weeks of paid parental leave. Secondary caregivers receive 4 weeks. Leave must begin within 12 months of the birth or adoption.",
+    "tags": ["leave", "parental", "maternity", "paternity", "family"]
+  },
+  {
+    "id": "expense-001",
+    "topic": "Expense Policy - Software",
+    "content": "Software subscriptions under $75/month can be expensed directly with receipt. Annual subscriptions over $500 require manager pre-approval. All software must be on the approved vendor list.",
+    "tags": ["expense", "software", "subscription", "budget", "approval"]
+  },
+  {
+    "id": "expense-002",
+    "topic": "Expense Policy - Hardware",
+    "content": "Hardware purchases over $500 require manager approval. Laptops and monitors are provided by IT. Home office equipment has a one-time $1,500 allowance for new employees.",
+    "tags": ["expense", "hardware", "equipment", "laptop", "home-office"]
+  },
+  {
+    "id": "expense-003",
+    "topic": "Expense Policy - Travel",
+    "content": "Domestic flights must be booked economy class. Hotel stays are capped at $200/night. Meal expenses are reimbursed up to $60/day. All travel requires pre-approval from your manager.",
+    "tags": ["expense", "travel", "flight", "hotel", "meals", "reimbursement"]
+  },
+  {
+    "id": "expense-004",
+    "topic": "Expense Policy - Team Events",
+    "content": "Team dinners and events are capped at $75 per person. The team lead must submit the expense with an attendee list. Events over $500 total require director approval.",
+    "tags": ["expense", "team", "dinner", "events", "social"]
+  },
+  {
+    "id": "remote-001",
+    "topic": "Remote Work Policy",
+    "content": "Employees may work remotely up to 3 days per week. Core hours are 10:00 AM to 3:00 PM in your local time zone. All remote workers must be reachable via Slack during core hours.",
+    "tags": ["remote", "WFH", "work-from-home", "hybrid", "hours"]
+  },
+  {
+    "id": "remote-002",
+    "topic": "Core Working Hours",
+    "content": "Core hours are 10:00 AM to 3:00 PM local time. Meetings should be scheduled within core hours. Flexible start/end times are allowed outside core hours with manager agreement.",
+    "tags": ["hours", "schedule", "core", "flexible", "meetings"]
+  },
+  {
+    "id": "coding-001",
+    "topic": "Git Workflow",
+    "content": "All code changes must go through pull requests. PRs require at least one approval from a team member. The main branch is protected — no direct pushes. Use feature branches named feature/TICKET-description.",
+    "tags": ["git", "code-review", "PR", "branching", "workflow"]
+  },
+  {
+    "id": "coding-002",
+    "topic": "Coding Standards",
+    "content": "Python code must pass ruff linting and black formatting. All public functions require docstrings. Test coverage must be at least 80% for new code. Type hints are required for function signatures.",
+    "tags": ["coding", "standards", "linting", "testing", "python"]
+  },
+  {
+    "id": "onboarding-001",
+    "topic": "Onboarding - First Week",
+    "content": "New employees receive a laptop on day 1. IT setup takes about 2 hours. Schedule 1-on-1s with your manager and team lead in the first week. Complete security training by end of week 1.",
+    "tags": ["onboarding", "new-hire", "first-week", "setup", "IT"]
+  },
+  {
+    "id": "onboarding-002",
+    "topic": "Onboarding - First Month",
+    "content": "Complete all compliance training modules by end of month 1. Shadow at least 2 team members on their current projects. Submit your 30-day reflection document to your manager.",
+    "tags": ["onboarding", "training", "compliance", "shadowing", "first-month"]
+  },
+  {
+    "id": "security-001",
+    "topic": "Security - Reporting Incidents",
+    "content": "Report security incidents to security@acmecorp.com immediately. Do not attempt to investigate on your own. All incidents must be reported within 24 hours of discovery. The security team will triage and respond.",
+    "tags": ["security", "incident", "reporting", "email", "urgent"]
+  },
+  {
+    "id": "security-002",
+    "topic": "Security - Password Policy",
+    "content": "Passwords must be at least 16 characters. Use a password manager (1Password is provided). Enable 2FA on all company accounts. Never share credentials via Slack or email.",
+    "tags": ["security", "password", "2FA", "authentication", "credentials"]
+  },
+  {
+    "id": "tech-001",
+    "topic": "Tech Stack",
+    "content": "Backend: Python 3.12, FastAPI, PostgreSQL. Frontend: React, TypeScript, Next.js. Infrastructure: AWS, Docker, Kubernetes. CI/CD: GitHub Actions. Monitoring: Datadog.",
+    "tags": ["tech", "stack", "python", "react", "AWS", "infrastructure"]
+  },
+  {
+    "id": "it-001",
+    "topic": "IT Support",
+    "content": "For IT issues, submit a ticket at help.acmecorp.com or message #it-support on Slack. Emergency issues (account lockout, security breach) can be escalated by calling the IT hotline at ext. 5555.",
+    "tags": ["IT", "support", "help", "ticket", "emergency"]
+  },
+  {
+    "id": "benefits-001",
+    "topic": "Health Benefits",
+    "content": "Acme Corp provides medical, dental, and vision insurance. Coverage begins on your start date. The company covers 80% of premiums for employees and 50% for dependents. Open enrollment is in November.",
+    "tags": ["benefits", "health", "insurance", "medical", "dental"]
+  },
+  {
+    "id": "performance-001",
+    "topic": "Performance Reviews",
+    "content": "Performance reviews happen twice a year in June and December. Self-assessments are due 2 weeks before the review. Ratings use a 1-5 scale. Promotions are discussed during the December cycle.",
+    "tags": ["performance", "review", "promotion", "assessment", "rating"]
+  },
+  {
+    "id": "meetings-001",
+    "topic": "Meeting Guidelines",
+    "content": "All meetings must have an agenda shared at least 1 hour before. Meetings should default to 25 or 50 minutes (not 30 or 60). No-agenda meetings can be declined. Fridays are meeting-free.",
+    "tags": ["meetings", "agenda", "calendar", "guidelines", "friday"]
+  }
+]
