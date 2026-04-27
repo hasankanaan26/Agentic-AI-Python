@@ -233,7 +233,7 @@ class LangGraphAgentRunner:
             # Inspect the graph state to see if we're paused for approval.
             status, pending_tool = await self._inspect_pause(agent, config, messages)
             final_answer = _last_ai_text(messages) if status == "completed" else None
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             # Catch-all so a provider blowup still returns a structured 200 with
             # status="error" instead of crashing the route.
             log.exception("langgraph_run_failed", error=str(e))

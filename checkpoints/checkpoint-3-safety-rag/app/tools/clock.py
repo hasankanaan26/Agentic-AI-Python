@@ -30,7 +30,7 @@ class ClockTool(BaseTool):
         },
     }
 
-    async def run(self, format: str = "both") -> ToolResult:  # noqa: A002
+    async def run(self, format: str = "both") -> ToolResult:
         """Return the current local date and/or time as a formatted string."""
         # ``datetime.now()`` uses the host's local timezone; this is fine for
         # the demo but a multi-region deployment should pass a tz explicitly.

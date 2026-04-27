@@ -96,7 +96,7 @@ class ToolRegistry:
         except TypeError as e:
             # Most likely cause: LLM passed wrong/missing argument names.
             return ToolResult.fail(f"Bad arguments for {name}: {e}")
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             # Last-ditch safety net. We log with traceback so we can debug
             # later, but still convert to a ToolResult so the loop survives.
             log.exception("tool_unexpected_error", tool=name)

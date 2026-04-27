@@ -35,7 +35,7 @@ class ToolRegistry:
         self._tools: dict[str, BaseTool] = {t.name: t for t in tools}
 
     @classmethod
-    def build(cls, settings: Settings) -> ToolRegistry:  # noqa: ARG003
+    def build(cls, settings: Settings) -> ToolRegistry:
         """Build the default registry for the current environment.
 
         ``settings`` is accepted (and intentionally unused in CP1) so the
@@ -102,7 +102,7 @@ class ToolRegistry:
             # `TypeError` here almost always means the LLM produced an
             # argument shape that doesn't match the tool's signature.
             return ToolResult.fail(f"Bad arguments for {name}: {e}")
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             # Catch-all: a genuinely buggy tool. Log a stack trace for
             # the operator and return a structured error to the agent.
             log.exception("tool_unexpected_error", tool=name)

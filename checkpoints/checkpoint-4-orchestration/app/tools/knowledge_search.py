@@ -93,7 +93,7 @@ class KnowledgeSearchTool(BaseTool):
             chunks = await retrieve(
                 query, embeddings=self._embeddings, store=self._store, top_k=top_k
             )
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             # Surface as structured error so the agent can recover instead of crashing.
             return ToolResult.fail(f"Knowledge search failed: {e}")
 

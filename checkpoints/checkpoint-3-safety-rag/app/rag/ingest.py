@@ -81,6 +81,6 @@ async def ensure_indexed(
             await ingest_knowledge(
                 embeddings=embeddings, store=store, knowledge_path=knowledge_path, force=False
             )
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             # Don't crash boot on a transient embedding failure; ingest is exposed at /rag/ingest.
             log.warning("ingest_at_startup_failed", error=str(e))

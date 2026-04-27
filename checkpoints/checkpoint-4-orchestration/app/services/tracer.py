@@ -36,9 +36,8 @@ def langsmith_enabled() -> bool:
     Used at startup to log whether the LangChain tracing callback will
     fire automatically; doesn't change behaviour, just observability.
     """
-    return (
-        os.getenv("LANGCHAIN_TRACING_V2", "").lower() == "true"
-        and bool(os.getenv("LANGCHAIN_API_KEY"))
+    return os.getenv("LANGCHAIN_TRACING_V2", "").lower() == "true" and bool(
+        os.getenv("LANGCHAIN_API_KEY")
     )
 
 
@@ -119,9 +118,9 @@ class TraceStore:
     async def list_summaries(self, limit: int = 20) -> list[dict]:
         """Return up to ``limit`` traces, newest first, with entry counts only."""
         async with self._lock:
-            traces = sorted(
-                self._traces.values(), key=lambda t: t["start_time"], reverse=True
-            )[:limit]
+            traces = sorted(self._traces.values(), key=lambda t: t["start_time"], reverse=True)[
+                :limit
+            ]
             return [
                 {
                     "trace_id": t["trace_id"],

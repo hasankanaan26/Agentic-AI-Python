@@ -53,7 +53,7 @@ def configure_logging(level: str = "INFO", json_output: bool = True) -> None:
         renderer = structlog.dev.ConsoleRenderer(colors=True)
 
     structlog.configure(
-        processors=shared_processors + [structlog.processors.format_exc_info, renderer],
+        processors=[*shared_processors, structlog.processors.format_exc_info, renderer],
         # `make_filtering_bound_logger` short-circuits below `log_level`
         # so the processor chain isn't even invoked for filtered messages.
         wrapper_class=structlog.make_filtering_bound_logger(log_level),

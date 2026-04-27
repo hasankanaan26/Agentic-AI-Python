@@ -89,9 +89,7 @@ class OrchestrationResponse(BaseModel):
     pending_thread_id: str | None = Field(
         default=None, description="Trace id to pass to /orchestrate/resume."
     )
-    pending_step: int | None = Field(
-        default=None, description="Step number waiting on approval."
-    )
+    pending_step: int | None = Field(default=None, description="Step number waiting on approval.")
     pending_tool: str | None = Field(
         default=None, description="Tool that requires approval before it can run."
     )

@@ -7,6 +7,7 @@ happens on anyio's thread pool.
 
 from __future__ import annotations
 
+import contextlib
 from pathlib import Path
 
 import chromadb
@@ -103,10 +104,8 @@ class VectorStore:
         def _do() -> None:
             # ``delete_collection`` raises ValueError if the collection doesn't exist;
             # swallow that case so the call is idempotent.
-            try:
+            with contextlib.suppress(ValueError):
                 self._client.delete_collection(name=COLLECTION_NAME)
-            except ValueError:
-                pass
             self._collection = self._client.get_or_create_collection(
                 name=COLLECTION_NAME,
                 metadata={"hnsw:space": "cosine"},

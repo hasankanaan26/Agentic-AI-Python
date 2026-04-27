@@ -35,7 +35,7 @@ class ClockTool(BaseTool):
         },
     }
 
-    async def run(self, format: str = "both") -> ToolResult:  # noqa: A002
+    async def run(self, format: str = "both") -> ToolResult:
         """Return the current wall-clock time in the requested format."""
         now = datetime.now()
         if format == "date":

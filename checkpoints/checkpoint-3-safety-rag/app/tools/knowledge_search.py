@@ -100,7 +100,7 @@ class KnowledgeSearchTool(BaseTool):
             chunks = await retrieve(
                 query, embeddings=self._embeddings, store=self._store, top_k=top_k
             )
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             # Convert any underlying failure into a ``ToolResult`` so the
             # agent can react instead of seeing a 500.
             return ToolResult.fail(f"Knowledge search failed: {e}")

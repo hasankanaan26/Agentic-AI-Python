@@ -25,11 +25,15 @@ class AgentRequest(BaseModel):
     """Body for the raw agent loop endpoint (``POST /agent/run-raw``)."""
 
     goal: str = Field(
-        ..., min_length=1, max_length=4000,
+        ...,
+        min_length=1,
+        max_length=4000,
         description="Natural-language goal for the agent to accomplish.",
     )
     max_steps: int = Field(
-        default=10, ge=1, le=25,
+        default=10,
+        ge=1,
+        le=25,
         description="Hard cap on think/act iterations before the agent gives up.",
     )
 
@@ -39,7 +43,9 @@ class AgentResponse(BaseModel):
 
     goal: str = Field(description="Echo of the original goal for trace correlation.")
     steps: list[AgentStep] = Field(description="Ordered list of tool invocations made.")
-    final_answer: str | None = Field(description="Final natural-language answer, if the agent finished.")
+    final_answer: str | None = Field(
+        description="Final natural-language answer, if the agent finished."
+    )
     steps_completed: int = Field(description="Number of tool calls completed (== len(steps)).")
     model: str = Field(description="Model identifier that drove the run.")
 
@@ -60,8 +66,12 @@ class SafeAgentRequest(AgentRequest):
 class LangGraphAgentResponse(AgentResponse):
     """Response from the LangGraph endpoint; includes thread/engine metadata."""
 
-    thread_id: str = Field(description="Thread identifier for resuming this run via the checkpointer.")
-    engine: str = Field(default="langgraph", description="Which agent engine produced this response.")
+    thread_id: str = Field(
+        description="Thread identifier for resuming this run via the checkpointer."
+    )
+    engine: str = Field(
+        default="langgraph", description="Which agent engine produced this response."
+    )
 
 
 class ApprovalAction(BaseModel):

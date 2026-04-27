@@ -7,6 +7,7 @@ happens on anyio's thread pool.
 
 from __future__ import annotations
 
+import contextlib
 from pathlib import Path
 
 import chromadb
@@ -104,11 +105,9 @@ class VectorStore:
         """Drop and recreate the collection (used by tests / re-ingest flows)."""
 
         def _do() -> None:
-            try:
+            # Collection may not exist yet on a fresh disk; ignore that case.
+            with contextlib.suppress(ValueError):
                 self._client.delete_collection(name=COLLECTION_NAME)
-            except ValueError:
-                # Collection may not exist yet on a fresh disk; ignore.
-                pass
             # Recreate so the field on this instance stays valid.
             self._collection = self._client.get_or_create_collection(
                 name=COLLECTION_NAME,

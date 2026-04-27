@@ -106,9 +106,7 @@ class LangGraphAgentRunner:
         self._lc_tools = build_langchain_tools(registry)
         self._checkpointer = _checkpointer()
 
-    def _build_agent(
-        self, *, allowed_tools: list[str] | None, require_approval: bool
-    ):
+    def _build_agent(self, *, allowed_tools: list[str] | None, require_approval: bool):
         """Build a fresh ReAct agent graph for this request.
 
         Args:
@@ -159,9 +157,7 @@ class LangGraphAgentRunner:
         # Thread IDs partition checkpointer state — each run gets its own.
         thread_id = f"thread_{next(_thread_seq)}"
 
-        agent = self._build_agent(
-            allowed_tools=allowed_tools, require_approval=require_approval
-        )
+        agent = self._build_agent(allowed_tools=allowed_tools, require_approval=require_approval)
         # ``recursion_limit`` is a LangGraph safety net independent of our
         # logical max_steps; doubled because each step counts as multiple
         # graph node visits (agent -> tools -> agent).
@@ -208,7 +204,7 @@ class LangGraphAgentRunner:
                     final_answer = msg.content
                     break
 
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             # Catch-all so a buggy tool / LLM glitch never crashes the route;
             # surface the error string in the final_answer for the caller.
             log.exception("langgraph_run_failed", error=str(e))

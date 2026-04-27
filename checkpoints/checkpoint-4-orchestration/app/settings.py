@@ -28,8 +28,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
-        extra="ignore",          # Ignore unknown env vars instead of raising.
-        case_sensitive=False,    # ``LLM_PROVIDER`` and ``llm_provider`` both work.
+        extra="ignore",  # Ignore unknown env vars instead of raising.
+        case_sensitive=False,  # ``LLM_PROVIDER`` and ``llm_provider`` both work.
     )
 
     # --- provider ----------------------------------------------------

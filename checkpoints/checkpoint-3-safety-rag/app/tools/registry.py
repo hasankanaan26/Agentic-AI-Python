@@ -7,9 +7,9 @@ from __future__ import annotations
 
 from app.logging_config import get_logger
 from app.models.tool import ToolResult
-from app.settings import Settings
 from app.services.embeddings import EmbeddingService
 from app.services.vector_store import VectorStore
+from app.settings import Settings
 from app.tools.base import BaseTool
 from app.tools.calculator import CalculatorTool
 from app.tools.clock import ClockTool
@@ -91,7 +91,7 @@ class ToolRegistry:
         except TypeError as e:
             # Bad arguments: surface as a structured error so the LLM can adapt.
             return ToolResult.fail(f"Bad arguments for {name}: {e}")
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             # Catch-all so a buggy tool can never bring down the agent.
             log.exception("tool_unexpected_error", tool=name)
             return ToolResult.fail(f"Unexpected tool error: {e}")

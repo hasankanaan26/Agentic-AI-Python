@@ -33,7 +33,9 @@ class ToolResult(BaseModel):
         default="ok", description="'ok' on success, 'error' on a recoverable failure."
     )
     output: str = Field(default="", description="String returned to the LLM as the observation.")
-    error: str | None = Field(default=None, description="Original error message when status == 'error'.")
+    error: str | None = Field(
+        default=None, description="Original error message when status == 'error'."
+    )
     metadata: dict[str, Any] = Field(
         default_factory=dict,
         description="Free-form bag (cache hit flags, hit counts, etc.) for traces.",

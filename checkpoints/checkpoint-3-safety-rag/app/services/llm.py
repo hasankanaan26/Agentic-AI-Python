@@ -122,9 +122,7 @@ class LLMService:
                     return await self._call_openai_structured(
                         user_prompt, response_model, system_prompt
                     )
-                return await self._call_azure_structured(
-                    user_prompt, response_model, system_prompt
-                )
+                return await self._call_azure_structured(user_prompt, response_model, system_prompt)
         raise RuntimeError("unreachable")  # pragma: no cover
 
     async def call_with_tools(

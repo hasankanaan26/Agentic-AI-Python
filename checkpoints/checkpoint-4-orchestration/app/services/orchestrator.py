@@ -118,7 +118,7 @@ class OrchestratorService:
                 allowed_tools=allowed_tools,
                 require_approval=require_approval,
             )
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             # Catch-all so an unexpected provider blowup still closes the trace cleanly.
             log.exception("orchestration_failed")
             await self._traces.complete(trace_id, status="error")
@@ -212,7 +212,11 @@ class OrchestratorService:
         yield {"type": "trace", "trace_id": trace_id}
         try:
             if blocked := await self._safety_block(trace_id, goal):
-                yield {"type": "summary", "final_summary": blocked["final_summary"], "status": "blocked"}
+                yield {
+                    "type": "summary",
+                    "final_summary": blocked["final_summary"],
+                    "status": "blocked",
+                }
                 yield {"type": "done"}
                 return
 
@@ -267,10 +271,14 @@ class OrchestratorService:
             summary = _summarise(results)
             await self._traces.complete(trace_id, status="completed")
             yield {"type": "summary", "final_summary": summary, "status": "completed"}
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             log.exception("orchestration_stream_failed")
             await self._traces.complete(trace_id, status="error")
-            yield {"type": "summary", "final_summary": f"Orchestration failed: {e}", "status": "error"}
+            yield {
+                "type": "summary",
+                "final_summary": f"Orchestration failed: {e}",
+                "status": "error",
+            }
         finally:
             yield {"type": "done"}
 
@@ -357,7 +365,7 @@ class OrchestratorService:
                 summary = (
                     f"Paused before step {step.step_number}: awaiting approval to "
                     f"call '{step.tool_needed}'. POST /orchestrate/resume/{trace_id} "
-                    f"with {{\"approved\": true}} to continue."
+                    f'with {{"approved": true}} to continue.'
                 )
                 return _build_response(
                     trace_id=trace_id,
@@ -444,7 +452,7 @@ class OrchestratorService:
                 "execution_step_complete",
                 {"step": step.step_number, "status": "completed"},
             )
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             # One failed step doesn't fail the orchestration -- record and move on.
             log.exception("orchestrator_step_failed", step=step.step_number)
             results.append(

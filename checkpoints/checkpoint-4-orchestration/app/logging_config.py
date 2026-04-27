@@ -36,10 +36,10 @@ def configure_logging(level: str = "INFO", json_output: bool = True) -> None:
     # Processors run in order: each one transforms the event dict before
     # the final renderer turns it into a string.
     shared_processors: list = [
-        structlog.contextvars.merge_contextvars,           # request_id etc. injected via contextvars
-        structlog.processors.add_log_level,                # adds "level": "info" key
+        structlog.contextvars.merge_contextvars,  # request_id etc. injected via contextvars
+        structlog.processors.add_log_level,  # adds "level": "info" key
         structlog.processors.TimeStamper(fmt="iso", utc=True),
-        structlog.processors.StackInfoRenderer(),          # renders stack info if asked for
+        structlog.processors.StackInfoRenderer(),  # renders stack info if asked for
     ]
 
     # Pick the terminal stage. JSON ships well to log aggregators; the dev
@@ -50,7 +50,7 @@ def configure_logging(level: str = "INFO", json_output: bool = True) -> None:
         renderer = structlog.dev.ConsoleRenderer(colors=True)
 
     structlog.configure(
-        processors=shared_processors + [structlog.processors.format_exc_info, renderer],
+        processors=[*shared_processors, structlog.processors.format_exc_info, renderer],
         wrapper_class=structlog.make_filtering_bound_logger(log_level),
         logger_factory=structlog.PrintLoggerFactory(),
         cache_logger_on_first_use=True,

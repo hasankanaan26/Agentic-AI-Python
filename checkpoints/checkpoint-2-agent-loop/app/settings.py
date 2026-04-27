@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
-        extra="ignore",       # tolerate unrelated keys in the environment
+        extra="ignore",  # tolerate unrelated keys in the environment
         case_sensitive=False,
     )
 
@@ -54,8 +54,8 @@ class Settings(BaseSettings):
     azure_openai_embedding_deployment: str = ""
 
     # --- runtime -----------------------------------------------------
-    max_agent_steps: int = 10              # hard ceiling on think->act->observe loops
-    agent_timeout_seconds: int = 60        # wall-clock budget per agent run
+    max_agent_steps: int = 10  # hard ceiling on think->act->observe loops
+    agent_timeout_seconds: int = 60  # wall-clock budget per agent run
     llm_request_timeout_seconds: int = 30  # per-call HTTP timeout for LLM SDKs
 
     # --- safety ------------------------------------------------------

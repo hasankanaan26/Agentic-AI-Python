@@ -10,7 +10,6 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
-
 from app.agents.raw_loop import run_agent
 from app.models.tool import ToolResult
 
@@ -32,7 +31,7 @@ class FakeLLM:
         # tests without seeing it mutated by ``pop(0)``.
         self._script = list(scripted)
 
-    async def call_with_tools(self, messages, tools, system_prompt):  # noqa: ARG002
+    async def call_with_tools(self, messages, tools, system_prompt):
         """Return the next scripted response, or a default 'no script' stop.
 
         The signature mirrors the real LLM service. ``noqa: ARG002`` is
@@ -58,7 +57,7 @@ class FakeRegistry:
     def __init__(self) -> None:
         self.calls: list[tuple[str, dict]] = []
 
-    def definitions(self, allowed=None):  # noqa: ARG002
+    def definitions(self, allowed=None):
         """Return a single-tool catalogue. ``allowed`` is ignored on purpose."""
         return [
             {

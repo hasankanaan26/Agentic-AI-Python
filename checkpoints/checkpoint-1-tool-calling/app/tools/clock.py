@@ -40,7 +40,7 @@ class ClockTool(BaseTool):
         },
     }
 
-    async def run(self, format: str = "both") -> ToolResult:  # noqa: A002
+    async def run(self, format: str = "both") -> ToolResult:
         """Return the current date and/or time as a formatted string.
 
         Args:

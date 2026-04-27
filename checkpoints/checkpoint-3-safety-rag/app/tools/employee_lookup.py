@@ -11,36 +11,68 @@ from app.tools.base import BaseTool
 
 EMPLOYEE_DIRECTORY = [
     {
-        "id": "EMP001", "name": "Alice Chen", "role": "CEO", "department": "Executive",
-        "email": "alice.chen@acmecorp.com", "phone": "+1-555-0101",
+        "id": "EMP001",
+        "name": "Alice Chen",
+        "role": "CEO",
+        "department": "Executive",
+        "email": "alice.chen@acmecorp.com",
+        "phone": "+1-555-0101",
     },
     {
-        "id": "EMP002", "name": "Bob Kumar", "role": "CTO", "department": "Engineering",
-        "email": "bob.kumar@acmecorp.com", "phone": "+1-555-0102",
+        "id": "EMP002",
+        "name": "Bob Kumar",
+        "role": "CTO",
+        "department": "Engineering",
+        "email": "bob.kumar@acmecorp.com",
+        "phone": "+1-555-0102",
     },
     {
-        "id": "EMP003", "name": "Carol Martinez", "role": "VP of Product", "department": "Product",
-        "email": "carol.martinez@acmecorp.com", "phone": "+1-555-0103",
+        "id": "EMP003",
+        "name": "Carol Martinez",
+        "role": "VP of Product",
+        "department": "Product",
+        "email": "carol.martinez@acmecorp.com",
+        "phone": "+1-555-0103",
     },
     {
-        "id": "EMP004", "name": "David Park", "role": "Senior Engineer", "department": "Engineering",
-        "email": "david.park@acmecorp.com", "phone": "+1-555-0104",
+        "id": "EMP004",
+        "name": "David Park",
+        "role": "Senior Engineer",
+        "department": "Engineering",
+        "email": "david.park@acmecorp.com",
+        "phone": "+1-555-0104",
     },
     {
-        "id": "EMP005", "name": "Emma Wilson", "role": "HR Manager", "department": "Human Resources",
-        "email": "emma.wilson@acmecorp.com", "phone": "+1-555-0105",
+        "id": "EMP005",
+        "name": "Emma Wilson",
+        "role": "HR Manager",
+        "department": "Human Resources",
+        "email": "emma.wilson@acmecorp.com",
+        "phone": "+1-555-0105",
     },
     {
-        "id": "EMP006", "name": "Frank Liu", "role": "Data Scientist", "department": "Engineering",
-        "email": "frank.liu@acmecorp.com", "phone": "+1-555-0106",
+        "id": "EMP006",
+        "name": "Frank Liu",
+        "role": "Data Scientist",
+        "department": "Engineering",
+        "email": "frank.liu@acmecorp.com",
+        "phone": "+1-555-0106",
     },
     {
-        "id": "EMP007", "name": "Grace Okafor", "role": "Designer", "department": "Product",
-        "email": "grace.okafor@acmecorp.com", "phone": "+1-555-0107",
+        "id": "EMP007",
+        "name": "Grace Okafor",
+        "role": "Designer",
+        "department": "Product",
+        "email": "grace.okafor@acmecorp.com",
+        "phone": "+1-555-0107",
     },
     {
-        "id": "EMP008", "name": "Hasan Al-Rashid", "role": "DevOps Engineer", "department": "Engineering",
-        "email": "hasan.alrashid@acmecorp.com", "phone": "+1-555-0108",
+        "id": "EMP008",
+        "name": "Hasan Al-Rashid",
+        "role": "DevOps Engineer",
+        "department": "Engineering",
+        "email": "hasan.alrashid@acmecorp.com",
+        "phone": "+1-555-0108",
     },
 ]
 
@@ -96,7 +128,8 @@ class EmployeeLookupTool(BaseTool):
         q = query.lower()
         # Single linear scan — directory is tiny, no need for an index.
         matches = [
-            emp for emp in EMPLOYEE_DIRECTORY
+            emp
+            for emp in EMPLOYEE_DIRECTORY
             if q in f"{emp['name']} {emp['role']} {emp['department']}".lower()
         ]
         if not matches:

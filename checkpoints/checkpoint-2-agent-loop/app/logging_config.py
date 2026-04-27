@@ -49,7 +49,7 @@ def configure_logging(level: str = "INFO", json_output: bool = True) -> None:
         renderer = structlog.dev.ConsoleRenderer(colors=True)
 
     structlog.configure(
-        processors=shared_processors + [structlog.processors.format_exc_info, renderer],
+        processors=[*shared_processors, structlog.processors.format_exc_info, renderer],
         wrapper_class=structlog.make_filtering_bound_logger(log_level),
         logger_factory=structlog.PrintLoggerFactory(),
         # Caching is safe because configuration is fixed for the process lifetime.

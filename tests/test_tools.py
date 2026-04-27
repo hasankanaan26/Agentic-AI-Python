@@ -6,7 +6,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from app.tools.calculator import CalculatorTool
 from app.tools.clock import ClockTool
 from app.tools.employee_lookup import EmployeeLookupTool

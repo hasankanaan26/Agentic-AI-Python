@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 import pytest
-from pydantic import ValidationError
-
 from app.models.agent import AgentRequest, SafeAgentRequest
 from app.models.orchestration import AgentPlan, OrchestrationRequest, PlanStep
 from app.models.tool import ToolResult
+from pydantic import ValidationError
 
 
 def test_agent_request_rejects_empty_goal():
