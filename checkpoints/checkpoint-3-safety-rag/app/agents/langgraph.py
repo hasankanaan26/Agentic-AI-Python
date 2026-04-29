@@ -141,6 +141,49 @@ def _pending_tool_call(messages: list) -> dict | None:
     return {"name": tc["name"], "args": tc["args"], "id": tc.get("id")}
 
 
+def _format_message(msg) -> dict:
+    """Compact, JSON-safe view of a LangChain message."""
+    out: dict[str, Any] = {
+        "type": getattr(msg, "type", "unknown"),
+        "content": str(getattr(msg, "content", "")),
+    }
+    if hasattr(msg, "tool_calls") and msg.tool_calls:
+        out["tool_calls"] = [
+            {"name": tc["name"], "args": tc["args"], "id": tc.get("id")}
+            for tc in msg.tool_calls
+        ]
+    if getattr(msg, "tool_call_id", None):
+        out["tool_call_id"] = msg.tool_call_id
+    if getattr(msg, "name", None) and out["type"] == "tool":
+        out["name"] = msg.name
+    if getattr(msg, "status", None) == "error":
+        out["status"] = "error"
+    return out
+
+
+def _format_snapshot(snap) -> dict:
+    """Project a LangGraph ``StateSnapshot`` into a JSON-safe dict for the UI."""
+    md = snap.metadata or {}
+    cfg = snap.config or {}
+    cp_id = cfg.get("configurable", {}).get("checkpoint_id")
+    parent_cfg = snap.parent_config or {}
+    parent_id = parent_cfg.get("configurable", {}).get("checkpoint_id")
+    messages = (snap.values or {}).get("messages", []) if snap.values else []
+    writes = md.get("writes") or {}
+    return {
+        "checkpoint_id": cp_id,
+        "parent_checkpoint_id": parent_id,
+        "step": md.get("step"),
+        "source": md.get("source"),
+        "next": list(snap.next) if snap.next else [],
+        # Just the node names that wrote at this step — full payload is huge.
+        "writes": list(writes.keys()) if writes else [],
+        "created_at": str(snap.created_at) if snap.created_at else None,
+        "messages": [_format_message(m) for m in messages],
+        "message_count": len(messages),
+    }
+
+
 class LangGraphAgentRunner:
     """Wraps a LangGraph ReAct agent with per-request configuration.
 
@@ -182,6 +225,35 @@ class LangGraphAgentRunner:
             {"thread_id": tid, **{k: v for k, v in ctx.items() if k != "max_steps"}}
             for tid, ctx in self._pending.items()
         ]
+
+    async def get_thread(self, thread_id: str) -> dict[str, Any]:
+        """Return the current state plus full checkpoint history for a thread.
+
+        Reads come straight from the checkpointer attached to the runner —
+        any agent built with the same checkpointer can read any thread it
+        has touched, regardless of the original ``allowed_tools``.
+        """
+        agent = self._build_agent(allowed_tools=None, require_approval=False)
+        config = {"configurable": {"thread_id": thread_id}}
+        current = await agent.aget_state(config)
+        if current is None or not current.values:
+            raise KeyError(thread_id)
+
+        history: list[dict] = []
+        async for snap in agent.aget_state_history(config):
+            history.append(_format_snapshot(snap))
+
+        ctx = self._pending.get(thread_id)
+        return {
+            "thread_id": thread_id,
+            "current": _format_snapshot(current),
+            "history": history,
+            "is_paused": ctx is not None,
+            "pending_context": (
+                {"goal": ctx["goal"], "allowed_tools": ctx.get("allowed_tools")}
+                if ctx else None
+            ),
+        }
 
     async def run(
         self,

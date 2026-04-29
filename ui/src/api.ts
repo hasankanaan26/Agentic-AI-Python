@@ -1,3 +1,4 @@
+import { recordThread } from "./storage";
 import {
   AgentResponse,
   ApiError,
@@ -9,6 +10,7 @@ import {
   SafeAgentRequest,
   SafetyCheckResult,
   TasksList,
+  ThreadDetail,
   ToolCallResponse,
   ToolDefinition,
 } from "./types";
@@ -35,22 +37,30 @@ export const api = {
   health: () => request<Record<string, unknown>>("/health"),
 
   // /agent
-  agentRun: (body: SafeAgentRequest) =>
-    request<LangGraphAgentResponse>("/agent/run", {
+  agentRun: async (body: SafeAgentRequest) => {
+    const r = await request<LangGraphAgentResponse>("/agent/run", {
       method: "POST",
       body: JSON.stringify(body),
-    }),
+    });
+    recordThread(r.thread_id);
+    return r;
+  },
   agentRunRaw: (body: { goal: string; max_steps?: number }) =>
     request<AgentResponse>("/agent/run-raw", {
       method: "POST",
       body: JSON.stringify(body),
     }),
-  agentApprove: (thread_id: string, approved: boolean) =>
-    request<LangGraphAgentResponse>("/agent/approve", {
+  agentApprove: async (thread_id: string, approved: boolean) => {
+    const r = await request<LangGraphAgentResponse>("/agent/approve", {
       method: "POST",
       body: JSON.stringify({ thread_id, approved }),
-    }),
+    });
+    recordThread(r.thread_id);
+    return r;
+  },
   agentPending: () => request<{ pending: PendingThread[] }>("/agent/pending"),
+  agentThread: (thread_id: string) =>
+    request<ThreadDetail>(`/agent/thread/${encodeURIComponent(thread_id)}`),
 
   // /safety
   checkPrompt: (text: string) =>

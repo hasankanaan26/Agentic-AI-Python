@@ -116,6 +116,37 @@ export interface InjectionDetail {
   findings: string[];
 }
 
+export type MessageType = "human" | "ai" | "tool" | "system" | "unknown";
+
+export interface SnapshotMessage {
+  type: MessageType;
+  content: string;
+  tool_calls?: { name: string; args: Record<string, unknown>; id: string | null }[];
+  tool_call_id?: string;
+  name?: string;
+  status?: "error";
+}
+
+export interface ThreadSnapshot {
+  checkpoint_id: string | null;
+  parent_checkpoint_id: string | null;
+  step: number | null;
+  source: string | null;
+  next: string[];
+  writes: string[];
+  created_at: string | null;
+  messages: SnapshotMessage[];
+  message_count: number;
+}
+
+export interface ThreadDetail {
+  thread_id: string;
+  current: ThreadSnapshot;
+  history: ThreadSnapshot[];
+  is_paused: boolean;
+  pending_context: { goal: string; allowed_tools: string[] | null } | null;
+}
+
 export class ApiError extends Error {
   status: number;
   detail: unknown;

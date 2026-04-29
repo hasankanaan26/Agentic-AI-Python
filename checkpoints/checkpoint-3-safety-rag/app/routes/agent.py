@@ -100,3 +100,23 @@ async def agent_pending(
 ) -> dict:
     """List threads currently awaiting human approval."""
     return {"pending": runner.pending_threads()}
+
+
+@router.get("/thread/{thread_id}")
+async def agent_thread(
+    thread_id: str,
+    runner: Annotated[LangGraphAgentRunner, Depends(get_langgraph_runner)],
+) -> dict:
+    """Inspect the full LangGraph state and checkpoint history for a thread.
+
+    Returns the current snapshot plus every prior checkpoint, with messages,
+    writes, and ``next`` decoded for the UI. Useful for explaining how the
+    agent's state evolves across each tool call.
+    """
+    try:
+        return await runner.get_thread(thread_id)
+    except KeyError:
+        raise HTTPException(
+            status_code=404,
+            detail={"error": "Thread not found", "thread_id": thread_id},
+        )

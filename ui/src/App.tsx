@@ -13,6 +13,7 @@ import { DashboardView } from "./views/DashboardView";
 import { AgentRunView } from "./views/AgentRunView";
 import { HitlView } from "./views/HitlView";
 import { TasksView } from "./views/TasksView";
+import { ThreadView } from "./views/ThreadView";
 import { SafetyView } from "./views/SafetyView";
 import { RagView } from "./views/RagView";
 import { ToolsView } from "./views/ToolsView";
@@ -23,6 +24,7 @@ export type Tab =
   | "agent"
   | "hitl"
   | "tasks"
+  | "thread"
   | "safety"
   | "rag"
   | "tools"
@@ -33,6 +35,7 @@ const TABS: { key: Tab; label: string; icon: React.ReactNode; hint: string }[] =
   { key: "agent", label: "Agent", icon: <SparkIcon size={14} />, hint: "Run, gate tools, watch the timeline" },
   { key: "hitl", label: "HITL flow", icon: <HitlIcon size={14} />, hint: "End-to-end approval" },
   { key: "tasks", label: "Tasks", icon: <ListIcon size={14} />, hint: "Grid + writes via approval" },
+  { key: "thread", label: "Thread inspector", icon: <ListIcon size={14} />, hint: "State + checkpoint history" },
   { key: "safety", label: "Safety", icon: <ShieldIcon size={14} />, hint: "Injection + permissions" },
   { key: "rag", label: "RAG", icon: <BookIcon size={14} />, hint: "Ingest + search" },
   { key: "tools", label: "Tools", icon: <ZapIcon size={14} />, hint: "Schemas + direct call" },
@@ -99,6 +102,7 @@ export default function App() {
         {tab === "agent" && <AgentRunView />}
         {tab === "hitl" && <HitlView />}
         {tab === "tasks" && <TasksView />}
+        {tab === "thread" && <ThreadView />}
         {tab === "safety" && <SafetyView />}
         {tab === "rag" && <RagView />}
         {tab === "tools" && <ToolsView />}
