@@ -1,49 +1,70 @@
-"""Build LangChain async tools from the registry.
+"""Build LangChain async tools from the registry — using the official `@tool` decorator.
 
-LangChain's `StructuredTool.from_function(coroutine=...)` wraps an async
-function as a tool LangGraph can `ainvoke`. We funnel every call through
-`registry.execute(name, args)` so the SAME execution path is used by:
-  - the raw agent loop,
-  - the LangGraph ReAct agent,
-  - the orchestrator's executor.
+We rely on the framework for as much as possible:
+  - ``langchain_core.tools.tool`` decorates an async function as a Tool;
+  - ``args_schema=...`` plugs in our Pydantic models for input validation;
+  - ``ToolException`` + ``handle_tool_error=True`` lets the framework mark
+    failed runs as ``ToolMessage(status="error")`` while still surfacing the
+    error string to the LLM (preserving the "errors are data" contract).
+
+We keep one layer of indirection: the body of each decorated function calls
+``registry.execute(name, args)`` so the raw agent loop and the LangGraph
+agent share the SAME execution path.
 """
 
 from __future__ import annotations
 
-from langchain_core.tools import StructuredTool
+from langchain_core.tools import BaseTool, ToolException, tool
 
 from app.tools.registry import ToolRegistry
-from app.tools.schemas import CalculatorInput, ClockInput, EmployeeLookupInput
+from app.tools.schemas import (
+    CalculatorInput,
+    ClockInput,
+    EmployeeLookupInput,
+    KnowledgeSearchInput,
+    TaskManagerInput,
+)
 
 
-def _wrap(registry: ToolRegistry, name: str, args_schema=None, description: str | None = None):
-    """Wrap a registry tool as a LangChain ``StructuredTool``."""
-
-    async def _runner(**kwargs):
-        # Funnel into the registry so error handling, logging, and any future
-        # cross-cutting concerns (rate limiting, traces, ...) live in one place.
-        result = await registry.execute(name, kwargs)
-        return result.output  # ToolResult -> string for the LLM
-
+def _make_tool(
+    registry: ToolRegistry,
+    name: str,
+    args_schema,
+    description: str | None = None,
+) -> BaseTool:
+    """Wrap a registry tool as a LangChain ``BaseTool`` via the ``@tool`` decorator."""
     tool_def = next(t.definition for t in registry.all() if t.name == name)
-    return StructuredTool.from_function(
-        coroutine=_runner,
-        name=name,
-        description=description or tool_def["description"],
+
+    @tool(
+        name,
         args_schema=args_schema,
+        description=description or tool_def["description"],
     )
+    async def _runner(**kwargs) -> str:
+        # Funnel into the registry so logging, retries, and future cross-cutting
+        # concerns live in one place.
+        result = await registry.execute(name, kwargs)
+        if result.status == "error":
+            # Raising ``ToolException`` is the official LangChain signal for a
+            # recoverable tool failure. The framework converts it into a
+            # ``ToolMessage(status="error")`` and — because we set
+            # ``handle_tool_error=True`` below — still hands the error string
+            # back to the LLM as the observation, so the agent can react.
+            raise ToolException(result.output)
+        return result.output
+
+    # ``handle_tool_error=True`` keeps the "errors are data" behaviour: the LLM
+    # sees the error string as a tool observation rather than the run aborting.
+    _runner.handle_tool_error = True
+    return _runner
 
 
-def build_langchain_tools(registry: ToolRegistry) -> list[StructuredTool]:
-    """Build the LangChain tool list LangGraph hands to the LLM.
-
-    Tools that benefit from input validation get an ``args_schema``; the
-    others rely on the JSON-schema published in their ``ToolDefinition``.
-    """
+def build_langchain_tools(registry: ToolRegistry) -> list[BaseTool]:
+    """Build the LangChain tool list LangGraph hands to the LLM."""
     return [
-        _wrap(registry, "calculator", args_schema=CalculatorInput),
-        _wrap(registry, "clock", args_schema=ClockInput),
-        _wrap(registry, "knowledge_search"),
-        _wrap(registry, "task_manager"),
-        _wrap(registry, "employee_lookup", args_schema=EmployeeLookupInput),
+        _make_tool(registry, "calculator", CalculatorInput),
+        _make_tool(registry, "clock", ClockInput),
+        _make_tool(registry, "knowledge_search", KnowledgeSearchInput),
+        _make_tool(registry, "task_manager", TaskManagerInput),
+        _make_tool(registry, "employee_lookup", EmployeeLookupInput),
     ]

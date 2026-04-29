@@ -30,17 +30,10 @@ async def agent_run(
     runner: Annotated[LangGraphAgentRunner, Depends(get_langgraph_runner)],
     settings: Annotated[Settings, Depends(get_settings_dep)],
 ) -> LangGraphAgentResponse:
-    """Run the LangGraph ReAct agent with optional tool gating + approval.
-
-    When ``settings.enable_injection_detection`` is on, the request is
-    rejected with HTTP 400 if the heuristic detector flags the goal — this
-    runs BEFORE we spend any tokens on the agent.
-    """
+    """Run the LangGraph ReAct agent with optional tool gating + approval."""
     if settings.enable_injection_detection:
         check = check_prompt_injection(request.goal)
         if check["flagged"]:
-            # Surface the structured findings so the client can show the user
-            # which heuristics tripped, not just an opaque error.
             raise HTTPException(
                 status_code=400,
                 detail={
@@ -72,21 +65,38 @@ async def agent_run_raw(
     return AgentResponse(**result)
 
 
-@router.post("/approve")
-async def agent_approve(action: ApprovalAction) -> dict:
-    """Placeholder for human-in-the-loop approval flows.
+@router.post("/approve", response_model=LangGraphAgentResponse)
+async def agent_approve(
+    action: ApprovalAction,
+    runner: Annotated[LangGraphAgentRunner, Depends(get_langgraph_runner)],
+) -> LangGraphAgentResponse:
+    """Resume (approve) or abort (reject) a paused LangGraph thread.
 
-    Real wiring would resume the LangGraph thread via the checkpointer
-    when ``approved`` is true; for now this returns a stub status.
+    On approve, the runner rebuilds the graph without ``interrupt_before``
+    and calls ``ainvoke(None, ...)`` — LangGraph picks up from the
+    checkpoint and runs the previously proposed tool call to completion.
+    On reject, the pending record is dropped and a ``status="rejected"``
+    response is returned without invoking any tool.
     """
-    if action.approved:
-        return {
-            "thread_id": action.thread_id,
-            "status": "approved",
-            "message": f"Approval granted for thread {action.thread_id}.",
-        }
-    return {
-        "thread_id": action.thread_id,
-        "status": "rejected",
-        "message": f"Approval denied for thread {action.thread_id}.",
-    }
+    try:
+        result = await runner.resume(
+            thread_id=action.thread_id, approved=action.approved
+        )
+    except KeyError:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": "Thread not found",
+                "thread_id": action.thread_id,
+                "hint": "The thread is not in a paused state, has already been resumed, or never existed.",
+            },
+        )
+    return LangGraphAgentResponse(**result)
+
+
+@router.get("/pending")
+async def agent_pending(
+    runner: Annotated[LangGraphAgentRunner, Depends(get_langgraph_runner)],
+) -> dict:
+    """List threads currently awaiting human approval."""
+    return {"pending": runner.pending_threads()}

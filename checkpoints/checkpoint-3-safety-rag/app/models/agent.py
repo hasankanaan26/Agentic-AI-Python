@@ -6,9 +6,23 @@ documents what each endpoint accepts and returns.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
+
+
+class ProposedToolCall(BaseModel):
+    """A tool call the agent intends to make, surfaced when the run is paused.
+
+    LangGraph's ``interrupt_before=["tools"]`` halts the graph immediately
+    before the tool node, leaving an ``AIMessage`` with ``tool_calls`` on the
+    state. We surface that pending call so a human reviewer can decide whether
+    to approve or reject before execution.
+    """
+
+    name: str = Field(description="Name of the tool the agent wants to invoke.")
+    args: dict[str, Any] = Field(description="Arguments the agent prepared for the tool.")
+    id: str | None = Field(default=None, description="LangChain tool_call_id for correlation.")
 
 
 class AgentStep(BaseModel):
@@ -71,6 +85,18 @@ class LangGraphAgentResponse(AgentResponse):
     )
     engine: str = Field(
         default="langgraph", description="Which agent engine produced this response."
+    )
+    status: Literal["completed", "paused", "rejected", "max_steps"] = Field(
+        default="completed",
+        description=(
+            "'completed' when the agent finished, 'paused' when it stopped at an "
+            "approval gate, 'rejected' when a human declined to resume, "
+            "'max_steps' when it ran out of iterations."
+        ),
+    )
+    proposed_tool_call: ProposedToolCall | None = Field(
+        default=None,
+        description="The pending tool call awaiting approval; only set when status='paused'.",
     )
 
 

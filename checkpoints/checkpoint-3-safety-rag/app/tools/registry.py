@@ -63,6 +63,10 @@ class ToolRegistry:
         """Return every registered tool in insertion order."""
         return list(self._tools.values())
 
+    def get(self, name: str) -> BaseTool | None:
+        """Look up a tool by name. Returns ``None`` if unknown."""
+        return self._tools.get(name)
+
     def names(self) -> list[str]:
         """Return all registered tool names."""
         return list(self._tools.keys())

@@ -4,7 +4,7 @@ This module constructs the ``FastAPI`` application instance that ``uvicorn``
 imports as ``app.main:app``. It wires up:
 
 - the lifespan context manager (singleton construction + shutdown),
-- every feature router (health, tools, agent, safety, rag).
+- every feature router (health, tools, agent, safety, rag, tasks).
 
 No request-handling logic lives here on purpose — keeping the entry point
 small makes the wiring obvious during code review.
@@ -15,7 +15,7 @@ from __future__ import annotations
 from fastapi import FastAPI
 
 from app.lifespan import lifespan
-from app.routes import agent, health, rag, safety, tools
+from app.routes import agent, health, rag, safety, tasks, tools
 
 # The single ASGI app object. ``lifespan`` builds shared singletons
 # (LLM client, vector store, tool registry, etc.) on startup and disposes
@@ -38,3 +38,4 @@ app.include_router(tools.router)
 app.include_router(agent.router)
 app.include_router(safety.router)
 app.include_router(rag.router)
+app.include_router(tasks.router)

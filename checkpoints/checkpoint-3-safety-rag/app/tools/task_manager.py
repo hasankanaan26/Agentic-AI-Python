@@ -62,6 +62,16 @@ class TaskManagerTool(BaseTool):
             self._tasks = json.loads(self._path.read_text(encoding="utf-8"))
         return self._tasks
 
+    async def list_raw(self) -> list[dict]:
+        """Return a copy of the live task list — used by ``/tasks/list``.
+
+        Holds the lock so concurrent ``create``/``complete`` mutations don't
+        leak a partially-updated view.
+        """
+        async with self._lock:
+            tasks = await self._load()
+            return [dict(t) for t in tasks]
+
     async def run(
         self,
         action: str,

@@ -58,3 +58,38 @@ class EmployeeLookupInput(BaseModel):
         if len(v.strip()) < 2:
             raise ValueError("Query must be at least 2 characters.")
         return v.strip()
+
+
+class KnowledgeSearchInput(BaseModel):
+    """args_schema for the ``knowledge_search`` LangChain tool."""
+
+    query: str = Field(
+        description="Natural-language description of what you're looking for."
+    )
+    top_k: int = Field(default=3, ge=1, le=10, description="Number of chunks to retrieve.")
+
+    @field_validator("query")
+    @classmethod
+    def _min_len(cls, v: str) -> str:
+        """Reject empty queries (after trimming)."""
+        if not v.strip():
+            raise ValueError("Query must not be empty.")
+        return v.strip()
+
+
+class TaskManagerInput(BaseModel):
+    """args_schema for the ``task_manager`` LangChain tool."""
+
+    action: str = Field(description="One of: list, create, complete, search.")
+    title: str | None = Field(default=None, description="Required for 'create'.")
+    task_id: int | None = Field(default=None, description="Required for 'complete'.")
+    query: str | None = Field(default=None, description="Required for 'search'.")
+
+    @field_validator("action")
+    @classmethod
+    def _check_action(cls, v: str) -> str:
+        """Validate ``action`` against the supported set."""
+        allowed = {"list", "create", "complete", "search"}
+        if v not in allowed:
+            raise ValueError(f"Action must be one of {allowed}, got '{v}'")
+        return v

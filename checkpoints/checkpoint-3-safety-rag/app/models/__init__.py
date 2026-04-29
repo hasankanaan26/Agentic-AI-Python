@@ -11,6 +11,7 @@ from app.models.agent import (
     AgentStep,
     ApprovalAction,
     LangGraphAgentResponse,
+    ProposedToolCall,
     SafeAgentRequest,
 )
 from app.models.rag import IngestResponse, RagStatus
@@ -31,6 +32,7 @@ __all__ = [
     "IngestResponse",
     "LangGraphAgentResponse",
     "PromptCheckRequest",
+    "ProposedToolCall",
     "RagStatus",
     "SafeAgentRequest",
     "SafetyCheckResult",
